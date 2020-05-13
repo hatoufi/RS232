@@ -1,4 +1,4 @@
-import serial
+tiimport serial
 import csv
 import time
 from serial import Serial
@@ -17,7 +17,7 @@ ser = serial.Serial(port, baudrate, timeout, parity=serial.PARITY_ODD,
 ser.isOpen()
 
 #Naming file by date
-filename = datetime.now().strftime('C:/Users/hatoufi/OneDrive - Oklahoma A and M System/PhD/Produced Water/Setup/Balance/RS232_%Y-%m-%d-%H-%M.csv')
+filename = datetime.now().strftime('C:/Users/hatoufi/Desktop/RS232_%Y-%m-%d-%H-%M.csv')
 
 #Create a CSV file and record the data in it
 with open(filename,'w',
