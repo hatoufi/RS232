@@ -4,10 +4,10 @@ from datetime import datetime
 
 
 #Open the CSV file created by RS232
-with open('C:/Users/hdallal/Desktop/RS232_2020-05-10-16-03.csv') as rf:
+with open('C:/Users/hatoufi/Desktop/RS232_2020-05-10-16-03.csv') as rf:
 
 #Create a new CSV file
-    with open('C:/Users/hdallal/Desktop/RS232edited.csv', 'w', newline='') as wf:
+    with open('RS232edited.csv', 'w', newline='') as wf:
         writer = csv.writer(wf)
 		
 #Create a header for the new file and start the data modification
