@@ -1,4 +1,4 @@
-tiimport serial
+import serial
 import csv
 import time
 from serial import Serial
