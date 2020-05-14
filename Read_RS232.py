@@ -5,6 +5,7 @@ from serial import Serial
 from datetime import datetime
 
 directory = 'C:/Users/hatoufi/Desktop'
+ts = 1
 
 
 #Open serial port
