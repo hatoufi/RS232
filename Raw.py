@@ -37,8 +37,5 @@ with open(filename,'w',
         stringValue = bytesValue.decode('utf-8')
 		
         #Save the string data in the CSV file
-        #DJL: Why don't you do the checks and clean-up here?
-        #instead of writing everything and then re-opening it in a new file,
-        #just do those things in this program...
         writer = csv.writer(f,delimiter=',')
         writer.writerow([stringValue])
