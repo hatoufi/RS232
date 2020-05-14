@@ -1,39 +1,56 @@
-import time
+import serial
 import csv
+import time as t
+from serial import Serial
 from datetime import datetime
 
+directory = 'C:/Users/hatoufi/Desktop'
 
-#Open the CSV file created by RS232
-with open('C:/Users/hatoufi/Desktop/RS232_2020-05-10-16-03.csv') as rf:
 
-#Create a new CSV file
-    with open('RS232edited.csv', 'w', newline='') as wf:
-        writer = csv.writer(wf)
-		
-#Create a header for the new file and start the data modification
-        writer.writerow(['Date', 'Time', 'Mass (g)'])
-        for data in csv.reader(rf):
-            if any(data):
-                for line in data:
-				
-#Split the data into two lists ([date and time] and [mass])
-                    lists = line.split('\n')
-					
-#Edit date and time data
-                    for x in lists[0]:
-					
-#Split the data into two lists ([date] and [time])
-                        d = lists[0].split()
+#Open serial port
+ser = serial.Serial(port='COM5', baudrate=9600, timeout=1, parity=serial.PARITY_ODD,
+                    stopbits=serial.STOPBITS_TWO, bytesize=serial.SEVENBITS
+)
+ser.isOpen()
 
-#Convert date string to date format
-                        date = datetime.strptime(d[0], '%m.%d.%Y').date()
+#Naming file by date
+filename = datetime.now().strftime('{}/RS232_%Y-%m-%d-%H-%M.csv'.format(directory))
+
+#Create a CSV file and record the data in it
+with open(filename,'w',
+          newline='') as f:
+    writer = csv.writer(f)
+    
+    #Save the string data in the CSV file
+    writer.writerow(['Date', 'Time', 'Mass (g)'])
+
+    #Read data in bytes type from serial port
+    while True:
+        bytesToRead = ser.inWaiting()
+        data = ser.read(bytesToRead)
+        t.sleep(ts)
+
+        #Remove first and last whitespace
+        bytesValue = data.strip()
+        
+        #Convert bytes to list
+        lists = bytesValue.decode('utf-8').split('\n')
+        
+        #skip empty rows
+        if len(lists) > 1:
+            
+			#Split the data into two lists ([date] and [time])
+            X = lists[0].split()
+            
+			#Convert date string to date format
+            date = datetime.strptime(X[0], '%m.%d.%Y').date()
 						
-#Convert time string to time format
-                        time = datetime.strptime(d[1], '%H:%M').time()
+			# #Convert time string to time format
+            time = datetime.strptime(X[1], '%H:%M').time()
 						
-#Edit mass data
-                        m = lists[1].split()
-                        mass = float(m[1])
-
-#Write the modified data on the CSV file
-                    writer.writerow([date,time,mass])
+			#Edit mass data
+            m = lists[1].split()
+            mass = float(m[1])
+                        
+			#Write the modified data on the CSV file
+            writer.writerow([date,time,mass])
