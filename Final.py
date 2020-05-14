@@ -39,18 +39,18 @@ with open(filename,'w',
         #skip empty rows
         if len(lists) > 1:
             
-			#Split the data into two lists ([date] and [time])
-            X = lists[0].split()
+            #Split the data into two lists ([date] and [time])
+            X = lists[0].split()		          
             
-			#Convert date string to date format
+            #Convert date string to date format
             date = datetime.strptime(X[0], '%m.%d.%Y').date()
-						
-			# #Convert time string to time format
+
+            # #Convert time string to time format
             time = datetime.strptime(X[1], '%H:%M').time()
-						
-			#Edit mass data
+
+            #Edit mass data
             m = lists[1].split()
             mass = float(m[1])
                         
-			#Write the modified data on the CSV file
+            #Write the modified data on the CSV file
             writer.writerow([date,time,mass])
