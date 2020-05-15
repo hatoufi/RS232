@@ -1,14 +1,13 @@
 import serial, csv, time
 from datetime import datetime
 
-directory = 'C:/Users/hatoufi/Desktop'
-ts = 1
-
+directory = 'C:/Users/hatoufi/Desktop' # directory for output
+log_rate = 1 # time in seconds between readings
 
 #Open port
 with open serial.Serial(port='COM5', baudrate=9600, timeout=1, parity=serial.PARITY_ODD,
                        stopbits=serial.STOPBITS_TWO, bytesize=serial.SEVENBITS) as ser:
-    ser.isOpen() # what is the points of this line?
+    ser.isOpen() # what is the point of this line?
 
     #Naming file by date
     filename = datetime.now().strftime('{}/RS232_%Y-%m-%d-%H-%M.csv'.format(directory))
