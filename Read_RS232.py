@@ -1,29 +1,40 @@
 import serial, csv, time
 from datetime import datetime
 
-directory = 'C:/Users/hatoufi/Desktop' # directory for output
-log_rate = 1 # time in seconds between readings
+directory = 'C:/Users/hatoufi/Desktop' #Directory for output
 
-#Open port
-with open serial.Serial(port='COM5', baudrate=9600, timeout=1, parity=serial.PARITY_ODD,
+filename = None			#Output file name
+
+port = 'COM5'			#Serial port COM#
+baudrate = 9600			#Serial port baudrate 
+timeout = 1				#Serial port timeout
+
+area = 0.0042			#Membrane area in m^2
+
+start = datetime.now()  #Save running code's start time
+
+log_rate = 1			#Time in seconds between readings
+
+#Open serial port
+with serial.Serial(port, baudrate, timeout=timeout, parity=serial.PARITY_ODD,
                        stopbits=serial.STOPBITS_TWO, bytesize=serial.SEVENBITS) as ser:
-    ser.isOpen() # what is the point of this line?
 
     #Naming file by date
-    filename = datetime.now().strftime('{}/RS232_%Y-%m-%d-%H-%M.csv'.format(directory))
+    if filename is None:
+        filename = datetime.now().strftime('{}/RS232_%Y-%m-%d-%H-%M.csv'.format(directory))
 
     #Create a CSV file and record the data in it
     with open(filename,'w', newline='') as f:
         writer = csv.writer(f)
     
         #Save the string data in the CSV file
-        writer.writerow(['Date', 'Time', 'Mass (g)'])
+        writer.writerow(['Date', 'Time', 'Mass (g)', 'Flux (Kg/m2/s)'])
 
         #Read data in bytes type from serial port
         while True:
             bytesToRead = ser.inWaiting()
             data = ser.read(bytesToRead)
-            time.sleep(ts)
+            time.sleep(log_rate)
 
             #Remove first and last whitespace
             bytesValue = data.strip()
@@ -31,20 +42,27 @@ with open serial.Serial(port='COM5', baudrate=9600, timeout=1, parity=serial.PAR
             #Convert bytes to list
             lists = bytesValue.decode('utf-8').split('\n')
         
-            #skip empty rows
+            #Skip empty rows
             if len(lists) > 1:
-            
+
                 #Split the data into two lists ([date] and [time])
                 d,t = lists[0].split()		          
-            
+                
                 #Convert date string to date format
                 d = datetime.strptime(d, '%m.%d.%Y').date()
-
+                
                 #Convert time string to time format
                 t = datetime.strptime(t, '%H:%M').time()
-
+                
                 #Edit mass data
                 mass = float(lists[1].split()[1])
-                        
+                
+                #Calculate elapsed time in seconds
+                elapsed_time = datetime.now() - start
+                etm = int(elapsed_time.total_seconds())
+                
+                #Calculate flux
+                flux = float(mass/1000/area/etm)
+                            
                 #Write the modified data on the CSV file
-                writer.writerow([d,t,mass])
+                writer.writerow([d,t,mass,flux])
